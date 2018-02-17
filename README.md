@@ -1,3 +1,3 @@
 # Projects
 
-All School Course and Individual Projects can be seen here
+All my Individual Projects can be seen here
