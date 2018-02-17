@@ -15,6 +15,8 @@ def Calculator(inp):
 		#if it is a character, check what operation to do
 		elif inp[i].isalpha():
 			
+
+			#12345
 			#clear previous number and operator alone
 			if inp[i].upper()=="C":
 				#print(s)
