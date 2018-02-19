@@ -15,15 +15,19 @@ class Calculator(object):
         global currValue
         currValue=str(eval(currValue+"/"+num))
 
+
 #INVOKER CLASS
 class CalculatorInvoker(object):
-    '''def __init__(self):
-        self.history=[]
-    @property
-    def history(self):
-        return self.history'''
+    def __init__(self):
+        self.operators=[]
+        self.numbers=[]
+    def undo(self,command):
+        self.action=self.operators.pop()
+        self.no=self.numbers.pop()
+        command.execute(self.action,self.no)
     def execute(self,command,num):
-        #self.history.append(command,num)
+        self.numbers.append(num)
+        self.operators.append(command)
         command.execute(num)
 
 #COMMAND CLASS
@@ -46,6 +50,16 @@ class MultiplyNumbers(command):
 class DivideNumbers(command):
     def execute(self,num):
         self.receiver.Divide(num)
+class UndoOpt(command):
+    def execute(self,command,num):
+        if isinstance(command,AddNumbers):
+            self.receiver.Subtract(num)
+        elif isinstance(command,SubtractNumbers):
+            self.receiver.Add(num)
+        elif isinstance(command,MultiplyNumbers):
+            self.receiver.Divide(num)
+        elif isinstance(command,DivideNumbers):
+            self.receiver.Multiply(num)
 
 #CLIENT CLASS
 class CalculatorClient(object):
@@ -54,9 +68,6 @@ class CalculatorClient(object):
         self.rec=Calculator()
         #CREATING INVOKER CLASS OBJECT
         self.inv=CalculatorInvoker()
-    '''@property
-    def historyInvoke(self):
-        return self.inv'''
     def invoke(self,op,b):
         if op=="+":
             self.inv.execute(AddNumbers(self.rec),b)
@@ -66,6 +77,8 @@ class CalculatorClient(object):
             self.inv.execute(MultiplyNumbers(self.rec),b)
         elif op=="/":
             self.inv.execute(DivideNumbers(self.rec),b)
+        elif op=="C":
+            self.inv.undo(UndoOpt(self.rec))
     
 def computeValue(exp):
     if exp[0].isdigit() or exp.startswith('-') or exp.startswith('+'):
@@ -111,6 +124,9 @@ if __name__=="__main__":
             if i<len(exp) and exp[i]=="A":
                 currValue="0"
                 i=i+1
+            if i<len(exp) and exp[i]=="C":
+                client.invoke(exp[i],None)
+                i=i+1
             while i<len(exp) and exp[i]==" ":
                 i=i+1
             if i<len(exp) and exp[i] in operators:
@@ -123,5 +139,4 @@ if __name__=="__main__":
                 i=i+j
                 client.invoke(op,b)
             i=i+1
-        #print(client.historyInvoke.history)
     print("the answer is: ",currValue)
