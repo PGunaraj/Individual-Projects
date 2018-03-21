@@ -1,3 +1,3 @@
-# Projects
+# Numerical Calculator
 
-All my Individual Projects can be seen here
+Implemented a numerical calculator with command design pattern.
